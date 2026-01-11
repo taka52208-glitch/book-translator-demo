@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: book-translator-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+    healthCheckPath: /api/health

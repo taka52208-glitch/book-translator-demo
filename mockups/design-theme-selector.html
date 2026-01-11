@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>洋書自動翻訳システム - デザインテーマ選定</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Theme 1: Midnight Scholar - 深夜の書斎 */
+      --t1-bg-primary: #0d1117;
+      --t1-bg-secondary: #161b22;
+      --t1-bg-card: #21262d;
+      --t1-accent: #58a6ff;
+      --t1-accent-hover: #79b8ff;
+      --t1-text-primary: #f0f6fc;
+      --t1-text-secondary: #8b949e;
+      --t1-border: #30363d;
+      --t1-success: #3fb950;
+      --t1-warning: #d29922;
+
+      /* Theme 2: Paper & Ink - 紙とインク */
+      --t2-bg-primary: #faf9f7;
+      --t2-bg-secondary: #f5f3ef;
+      --t2-bg-card: #ffffff;
+      --t2-accent: #c9a962;
+      --t2-accent-hover: #b8963e;
+      --t2-text-primary: #2d2a26;
+      --t2-text-secondary: #6b6560;
+      --t2-border: #e5e0d8;
+      --t2-success: #5d8a66;
+      --t2-warning: #c9a962;
+
+      /* Theme 3: Neon Translator - ネオン翻訳機 */
+      --t3-bg-primary: #0a0a0f;
+      --t3-bg-secondary: #12121a;
+      --t3-bg-card: #1a1a24;
+      --t3-accent: #00d9ff;
+      --t3-accent-hover: #00f0ff;
+      --t3-accent-secondary: #ff6b9d;
+      --t3-text-primary: #ffffff;
+      --t3-text-secondary: #8888a0;
+      --t3-border: #2a2a3a;
+      --t3-success: #00ff88;
+      --t3-warning: #ffaa00;
+
+      /* Theme 4: Nordic Frost - 北欧の霜 */
+      --t4-bg-primary: #f8fafc;
+      --t4-bg-secondary: #f1f5f9;
+      --t4-bg-card: #ffffff;
+      --t4-accent: #0369a1;
+      --t4-accent-hover: #0284c7;
+      --t4-text-primary: #0f172a;
+      --t4-text-secondary: #64748b;
+      --t4-border: #e2e8f0;
+      --t4-success: #059669;
+      --t4-warning: #d97706;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background: #1a1a2e;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    /* Header */
+    .selector-header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 32px 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .selector-header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .selector-header p {
+      color: #8b8b9e;
+      font-size: 15px;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      background: #16213e;
+      padding: 0 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 16px 28px;
+      background: transparent;
+      border: none;
+      color: #8b8b9e;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #00d9ff, #ff6b9d);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      font-size: 11px;
+      margin-left: 8px;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: linear-gradient(90deg, #00d9ff, #ff6b9d);
+      color: #000;
+    }
+
+    /* Theme Container */
+    .theme-container {
+      display: none;
+      padding: 48px;
+      min-height: calc(100vh - 180px);
+    }
+
+    .theme-container.active {
+      display: block;
+    }
+
+    /* Theme Description */
+    .theme-desc {
+      max-width: 800px;
+      margin-bottom: 40px;
+    }
+
+    .theme-desc h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .theme-desc p {
+      color: #8b8b9e;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .theme-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .theme-tag {
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      font-size: 12px;
+      color: #8b8b9e;
+    }
+
+    /* ========================================
+       THEME 1: Midnight Scholar
+       ======================================== */
+    .theme1-preview {
+      background: var(--t1-bg-primary);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .t1-header {
+      background: var(--t1-bg-secondary);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--t1-border);
+    }
+
+    .t1-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--t1-text-primary);
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .t1-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--t1-accent), #a855f7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .t1-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .t1-nav-item {
+      padding: 8px 16px;
+      color: var(--t1-text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .t1-nav-item:hover, .t1-nav-item.active {
+      color: var(--t1-text-primary);
+      background: var(--t1-bg-card);
+    }
+
+    .t1-main {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .t1-upload-area {
+      background: var(--t1-bg-secondary);
+      border: 2px dashed var(--t1-border);
+      border-radius: 12px;
+      padding: 48px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .t1-upload-area:hover {
+      border-color: var(--t1-accent);
+      background: rgba(88, 166, 255, 0.05);
+    }
+
+    .t1-upload-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--t1-bg-card);
+      border-radius: 12px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t1-accent);
+    }
+
+    .t1-upload-title {
+      color: var(--t1-text-primary);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .t1-upload-desc {
+      color: var(--t1-text-secondary);
+      font-size: 14px;
+    }
+
+    .t1-prev-text {
+      background: var(--t1-bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .t1-prev-text label {
+      color: var(--t1-text-secondary);
+      font-size: 13px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .t1-prev-text textarea {
+      width: 100%;
+      background: var(--t1-bg-card);
+      border: 1px solid var(--t1-border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--t1-text-primary);
+      font-size: 14px;
+      resize: none;
+      height: 80px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    .t1-result-area {
+      background: var(--t1-bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .t1-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .t1-result-title {
+      color: var(--t1-text-primary);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .t1-result-badge {
+      padding: 4px 12px;
+      background: rgba(63, 185, 80, 0.2);
+      color: var(--t1-success);
+      font-size: 12px;
+      border-radius: 16px;
+    }
+
+    .t1-result-content {
+      background: var(--t1-bg-card);
+      border-radius: 8px;
+      padding: 20px;
+      color: var(--t1-text-primary);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .t1-image-marker {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(168, 85, 247, 0.2);
+      color: #a855f7;
+      font-size: 12px;
+      border-radius: 4px;
+      margin: 12px 0;
+    }
+
+    .t1-translate-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--t1-accent), #a855f7);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.3s;
+    }
+
+    .t1-translate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(88, 166, 255, 0.3);
+    }
+
+    .t1-footer-text {
+      margin-top: 16px;
+      background: var(--t1-bg-card);
+      border-radius: 8px;
+      padding: 12px 16px;
+      border-left: 3px solid var(--t1-warning);
+    }
+
+    .t1-footer-label {
+      color: var(--t1-warning);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .t1-footer-value {
+      color: var(--t1-text-secondary);
+      font-size: 13px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    /* ========================================
+       THEME 2: Paper & Ink
+       ======================================== */
+    .theme2-preview {
+      background: var(--t2-bg-primary);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .t2-header {
+      background: var(--t2-bg-card);
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--t2-border);
+    }
+
+    .t2-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--t2-text-primary);
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .t2-logo-icon {
+      width: 36px;
+      height: 36px;
+      position: relative;
+    }
+
+    .t2-logo-icon::before {
+      content: '';
+      position: absolute;
+      width: 28px;
+      height: 36px;
+      background: var(--t2-accent);
+      border-radius: 2px;
+      left: 4px;
+    }
+
+    .t2-logo-icon::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 4px;
+      background: var(--t2-text-primary);
+      top: 12px;
+      left: 8px;
+      box-shadow: 0 8px 0 var(--t2-text-primary), 0 16px 0 var(--t2-text-primary);
+    }
+
+    .t2-nav {
+      display: flex;
+      gap: 32px;
+    }
+
+    .t2-nav-item {
+      color: var(--t2-text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .t2-nav-item.active {
+      color: var(--t2-text-primary);
+    }
+
+    .t2-nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--t2-accent);
+    }
+
+    .t2-main {
+      padding: 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .t2-page-title {
+      text-align: center;
+      color: var(--t2-text-primary);
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .t2-page-subtitle {
+      text-align: center;
+      color: var(--t2-text-secondary);
+      font-size: 15px;
+      margin-bottom: 40px;
+    }
+
+    .t2-content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .t2-upload-card {
+      background: var(--t2-bg-card);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .t2-upload-area {
+      border: 2px dashed var(--t2-border);
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      background: var(--t2-bg-secondary);
+      transition: all 0.3s;
+    }
+
+    .t2-upload-area:hover {
+      border-color: var(--t2-accent);
+      background: rgba(201, 169, 98, 0.05);
+    }
+
+    .t2-upload-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      border: 2px solid var(--t2-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t2-accent);
+    }
+
+    .t2-upload-title {
+      color: var(--t2-text-primary);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .t2-upload-desc {
+      color: var(--t2-text-secondary);
+      font-size: 13px;
+    }
+
+    .t2-section-label {
+      color: var(--t2-text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      margin-top: 24px;
+    }
+
+    .t2-input {
+      width: 100%;
+      background: var(--t2-bg-secondary);
+      border: 1px solid var(--t2-border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      color: var(--t2-text-primary);
+      font-size: 14px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    .t2-result-card {
+      background: var(--t2-bg-card);
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .t2-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--t2-border);
+    }
+
+    .t2-result-title {
+      color: var(--t2-text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .t2-page-num {
+      color: var(--t2-text-secondary);
+      font-size: 13px;
+    }
+
+    .t2-result-content {
+      color: var(--t2-text-primary);
+      font-size: 16px;
+      line-height: 2;
+      letter-spacing: 0.3px;
+    }
+
+    .t2-image-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      margin: 24px 0;
+      background: linear-gradient(135deg, rgba(201, 169, 98, 0.1), rgba(201, 169, 98, 0.05));
+      border: 1px solid rgba(201, 169, 98, 0.3);
+      border-radius: 8px;
+      color: var(--t2-accent);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .t2-translate-btn {
+      width: 100%;
+      padding: 16px 24px;
+      background: var(--t2-accent);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+    }
+
+    .t2-translate-btn:hover {
+      background: var(--t2-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .t2-footer-text {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(201, 169, 98, 0.08);
+      border-radius: 6px;
+    }
+
+    .t2-footer-label {
+      color: var(--t2-accent-hover);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .t2-footer-value {
+      color: var(--t2-text-secondary);
+      font-size: 14px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    /* ========================================
+       THEME 3: Neon Translator
+       ======================================== */
+    .theme3-preview {
+      background: var(--t3-bg-primary);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .theme3-preview::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--t3-accent), var(--t3-accent-secondary), transparent);
+    }
+
+    .t3-header {
+      background: var(--t3-bg-secondary);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--t3-border);
+    }
+
+    .t3-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--t3-text-primary);
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .t3-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--t3-accent), var(--t3-accent-secondary));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .t3-logo-icon::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--t3-accent), var(--t3-accent-secondary));
+      border-radius: 10px;
+      z-index: -1;
+      opacity: 0.5;
+      filter: blur(8px);
+    }
+
+    .t3-nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    .t3-nav-item {
+      padding: 10px 18px;
+      color: var(--t3-text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .t3-nav-item:hover {
+      color: var(--t3-text-primary);
+    }
+
+    .t3-nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(255, 107, 157, 0.15));
+      color: var(--t3-text-primary);
+      border: 1px solid rgba(0, 217, 255, 0.3);
+    }
+
+    .t3-main {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .t3-panel {
+      background: var(--t3-bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--t3-border);
+      overflow: hidden;
+    }
+
+    .t3-panel-header {
+      padding: 16px 20px;
+      background: var(--t3-bg-card);
+      border-bottom: 1px solid var(--t3-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .t3-panel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .t3-panel-dot.cyan { background: var(--t3-accent); box-shadow: 0 0 8px var(--t3-accent); }
+    .t3-panel-dot.pink { background: var(--t3-accent-secondary); box-shadow: 0 0 8px var(--t3-accent-secondary); }
+    .t3-panel-dot.green { background: var(--t3-success); box-shadow: 0 0 8px var(--t3-success); }
+
+    .t3-panel-title {
+      color: var(--t3-text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .t3-panel-body {
+      padding: 20px;
+    }
+
+    .t3-upload-area {
+      border: 2px dashed var(--t3-border);
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .t3-upload-area::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.03), rgba(255, 107, 157, 0.03));
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .t3-upload-area:hover {
+      border-color: var(--t3-accent);
+    }
+
+    .t3-upload-area:hover::before {
+      opacity: 1;
+    }
+
+    .t3-upload-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      background: var(--t3-bg-card);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t3-accent);
+      position: relative;
+    }
+
+    .t3-upload-icon::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      background: linear-gradient(135deg, var(--t3-accent), var(--t3-accent-secondary));
+      border-radius: 16px;
+      z-index: -1;
+      opacity: 0.2;
+      filter: blur(12px);
+    }
+
+    .t3-upload-title {
+      color: var(--t3-text-primary);
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .t3-upload-desc {
+      color: var(--t3-text-secondary);
+      font-size: 13px;
+    }
+
+    .t3-input-group {
+      margin-top: 20px;
+    }
+
+    .t3-input-label {
+      color: var(--t3-text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .t3-textarea {
+      width: 100%;
+      background: var(--t3-bg-card);
+      border: 1px solid var(--t3-border);
+      border-radius: 6px;
+      padding: 12px;
+      color: var(--t3-text-primary);
+      font-size: 13px;
+      font-family: 'Source Code Pro', monospace;
+      resize: none;
+      height: 70px;
+      transition: all 0.3s;
+    }
+
+    .t3-textarea:focus {
+      outline: none;
+      border-color: var(--t3-accent);
+      box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+    }
+
+    .t3-translate-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--t3-accent), var(--t3-accent-secondary));
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .t3-translate-btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--t3-accent), var(--t3-accent-secondary));
+      z-index: -1;
+      filter: blur(16px);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .t3-translate-btn:hover::before {
+      opacity: 0.8;
+    }
+
+    .t3-result-content {
+      background: var(--t3-bg-card);
+      border-radius: 8px;
+      padding: 20px;
+      color: var(--t3-text-primary);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .t3-image-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      margin: 16px 0;
+      background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 107, 157, 0.1));
+      border: 1px solid rgba(0, 217, 255, 0.3);
+      border-radius: 6px;
+      color: var(--t3-accent);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .t3-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--t3-bg-card);
+      border-top: 1px solid var(--t3-border);
+    }
+
+    .t3-status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--t3-text-secondary);
+      font-size: 12px;
+    }
+
+    .t3-status-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--t3-success);
+      box-shadow: 0 0 8px var(--t3-success);
+    }
+
+    .t3-footer-text {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: rgba(255, 170, 0, 0.1);
+      border: 1px solid rgba(255, 170, 0, 0.3);
+      border-radius: 6px;
+    }
+
+    .t3-footer-label {
+      color: var(--t3-warning);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .t3-footer-value {
+      color: var(--t3-text-secondary);
+      font-size: 13px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    /* ========================================
+       THEME 4: Nordic Frost
+       ======================================== */
+    .theme4-preview {
+      background: var(--t4-bg-primary);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    .t4-header {
+      background: var(--t4-bg-card);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--t4-border);
+    }
+
+    .t4-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--t4-text-primary);
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .t4-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--t4-accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .t4-nav {
+      display: flex;
+      gap: 4px;
+      background: var(--t4-bg-secondary);
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .t4-nav-item {
+      padding: 8px 16px;
+      color: var(--t4-text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .t4-nav-item.active {
+      background: var(--t4-bg-card);
+      color: var(--t4-text-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .t4-main {
+      padding: 32px;
+    }
+
+    .t4-hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .t4-hero h1 {
+      color: var(--t4-text-primary);
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .t4-hero p {
+      color: var(--t4-text-secondary);
+      font-size: 14px;
+    }
+
+    .t4-content-card {
+      background: var(--t4-bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+
+    .t4-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .t4-section-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(3, 105, 161, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t4-accent);
+    }
+
+    .t4-section-title {
+      color: var(--t4-text-primary);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .t4-section-desc {
+      color: var(--t4-text-secondary);
+      font-size: 13px;
+    }
+
+    .t4-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .t4-upload-zone {
+      border: 2px dashed var(--t4-border);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      background: var(--t4-bg-secondary);
+      transition: all 0.2s;
+    }
+
+    .t4-upload-zone:hover {
+      border-color: var(--t4-accent);
+      background: rgba(3, 105, 161, 0.02);
+    }
+
+    .t4-upload-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: var(--t4-bg-card);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--t4-accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .t4-upload-title {
+      color: var(--t4-text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .t4-upload-desc {
+      color: var(--t4-text-secondary);
+      font-size: 12px;
+    }
+
+    .t4-input-wrapper {
+      margin-top: 16px;
+    }
+
+    .t4-label {
+      color: var(--t4-text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .t4-textarea {
+      width: 100%;
+      background: var(--t4-bg-secondary);
+      border: 1px solid var(--t4-border);
+      border-radius: 8px;
+      padding: 12px;
+      color: var(--t4-text-primary);
+      font-size: 13px;
+      font-family: 'Source Code Pro', monospace;
+      resize: none;
+      height: 80px;
+      transition: all 0.2s;
+    }
+
+    .t4-textarea:focus {
+      outline: none;
+      border-color: var(--t4-accent);
+      box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.1);
+    }
+
+    .t4-result-box {
+      background: var(--t4-bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .t4-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .t4-result-title {
+      color: var(--t4-text-primary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .t4-result-page {
+      color: var(--t4-text-secondary);
+      font-size: 12px;
+      background: var(--t4-bg-card);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .t4-result-content {
+      color: var(--t4-text-primary);
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .t4-image-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      background: rgba(3, 105, 161, 0.05);
+      border: 1px solid rgba(3, 105, 161, 0.15);
+      border-radius: 8px;
+      color: var(--t4-accent);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .t4-translate-btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--t4-accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.2s;
+    }
+
+    .t4-translate-btn:hover {
+      background: var(--t4-accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.2);
+    }
+
+    .t4-footer-card {
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: rgba(217, 119, 6, 0.08);
+      border: 1px solid rgba(217, 119, 6, 0.2);
+      border-radius: 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .t4-footer-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--t4-warning);
+      flex-shrink: 0;
+    }
+
+    .t4-footer-text {
+      flex: 1;
+    }
+
+    .t4-footer-label {
+      color: var(--t4-warning);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .t4-footer-value {
+      color: var(--t4-text-secondary);
+      font-size: 13px;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    /* Selection Footer */
+    .selection-footer {
+      background: #16213e;
+      padding: 24px 48px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .selection-info {
+      color: #8b8b9e;
+      font-size: 14px;
+    }
+
+    .selection-info strong {
+      color: #fff;
+    }
+
+    .select-btn {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #00d9ff, #ff6b9d);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 217, 255, 0.3);
+    }
+
+    /* SVG Icons */
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .icon-sm {
+      width: 20px;
+      height: 20px;
+    }
+
+    .icon-lg {
+      width: 28px;
+      height: 28px;
+    }
+  </style>
+</head>
+<body>
+  <header class="selector-header">
+    <h1>洋書自動翻訳システム - デザインテーマ選定</h1>
+    <p>プロジェクトに最適なデザインテーマを4つのオプションから選択してください</p>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="theme1">
+      Midnight Scholar
+      <span class="tab-badge">Dark</span>
+    </button>
+    <button class="tab-btn" data-tab="theme2">
+      Paper & Ink
+      <span class="tab-badge">Light</span>
+    </button>
+    <button class="tab-btn" data-tab="theme3">
+      Neon Translator
+      <span class="tab-badge">Cyber</span>
+    </button>
+    <button class="tab-btn" data-tab="theme4">
+      Nordic Frost
+      <span class="tab-badge">Clean</span>
+    </button>
+  </nav>
+
+  <!-- Theme 1: Midnight Scholar -->
+  <div id="theme1" class="theme-container active">
+    <div class="theme-desc">
+      <h2>Midnight Scholar - 深夜の書斎</h2>
+      <p>
+        深夜に洋書を読むような静謐な雰囲気。ダークテーマで目に優しく、長時間の作業でも疲れにくい設計。
+        GitHub風のモダンなデザインで、技術者に親しみやすい印象を与えます。
+        パープルとブルーのグラデーションアクセントが知的な印象を演出。
+      </p>
+      <div class="theme-tags">
+        <span class="theme-tag">ダークテーマ</span>
+        <span class="theme-tag">目に優しい</span>
+        <span class="theme-tag">開発者向け</span>
+        <span class="theme-tag">モダン</span>
+        <span class="theme-tag">GitHub風</span>
+      </div>
+    </div>
+
+    <div class="theme1-preview">
+      <header class="t1-header">
+        <div class="t1-logo">
+          <div class="t1-logo-icon">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          洋書翻訳システム
+        </div>
+        <nav class="t1-nav">
+          <a href="#" class="t1-nav-item active">翻訳デモ</a>
+          <a href="#" class="t1-nav-item">ワークフロー</a>
+        </nav>
+      </header>
+
+      <main class="t1-main">
+        <div>
+          <div class="t1-upload-area">
+            <div class="t1-upload-icon">
+              <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div class="t1-upload-title">Kindleスクリーンショットをドロップ</div>
+            <div class="t1-upload-desc">JPG / PNG形式 - 最大10MB</div>
+          </div>
+
+          <div class="t1-prev-text">
+            <label>前ページ末尾（ページ跨ぎ対応）</label>
+            <textarea placeholder="前ページで途切れた英文があれば入力...">The protagonist slowly walked toward the</textarea>
+          </div>
+
+          <button class="t1-translate-btn">
+            <svg class="icon-sm" style="display:inline-block;vertical-align:middle;margin-right:8px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+            </svg>
+            翻訳を実行
+          </button>
+        </div>
+
+        <div class="t1-result-area">
+          <div class="t1-result-header">
+            <div class="t1-result-title">翻訳結果</div>
+            <div class="t1-result-badge">Page 142</div>
+          </div>
+          <div class="t1-result-content">
+            <p>主人公はゆっくりと古い洋館へと歩を進めた。玄関のドアは風雨にさらされ、かつての輝きを失っていたが、その佇まいには依然として威厳が感じられた。</p>
+
+            <div class="t1-image-marker">
+              <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              [IMAGE_HERE] イラスト挿入位置
+            </div>
+
+            <p>彼女は深呼吸をして、意を決したように扉に手をかけた。重厚な音とともに扉が開くと、埃の匂いが鼻を突いた。しかし、それは不快なものではなく、むしろ懐かしさを感じさせる香りだった。</p>
+          </div>
+
+          <div class="t1-footer-text">
+            <div class="t1-footer-label">原文末尾（次ページ用）</div>
+            <div class="t1-footer-value">Inside the mansion, she discovered a</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Theme 2: Paper & Ink -->
+  <div id="theme2" class="theme-container">
+    <div class="theme-desc">
+      <h2>Paper & Ink - 紙とインク</h2>
+      <p>
+        古典的な書籍の温かみを感じるエレガントなデザイン。クリーム色の背景とセリフ調のアクセントで、
+        本を読むような安心感を演出。文学的な雰囲気が洋書翻訳サービスにぴったりマッチします。
+        クライアントに「本当の翻訳サービス」という信頼感を与えます。
+      </p>
+      <div class="theme-tags">
+        <span class="theme-tag">ライトテーマ</span>
+        <span class="theme-tag">エレガント</span>
+        <span class="theme-tag">クラシック</span>
+        <span class="theme-tag">読書体験</span>
+        <span class="theme-tag">信頼感</span>
+      </div>
+    </div>
+
+    <div class="theme2-preview">
+      <header class="t2-header">
+        <div class="t2-logo">
+          <div class="t2-logo-icon"></div>
+          洋書翻訳システム
+        </div>
+        <nav class="t2-nav">
+          <a href="#" class="t2-nav-item active">翻訳デモ</a>
+          <a href="#" class="t2-nav-item">ワークフロー</a>
+        </nav>
+      </header>
+
+      <main class="t2-main">
+        <h1 class="t2-page-title">翻訳デモンストレーション</h1>
+        <p class="t2-page-subtitle">Kindleスクリーンショットを翻訳して、品質をご確認ください</p>
+
+        <div class="t2-content-grid">
+          <div class="t2-upload-card">
+            <div class="t2-upload-area">
+              <div class="t2-upload-icon">
+                <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <div class="t2-upload-title">画像をアップロード</div>
+              <div class="t2-upload-desc">ドラッグ&ドロップまたはクリック</div>
+            </div>
+
+            <div class="t2-section-label">前ページ末尾</div>
+            <input type="text" class="t2-input" value="The protagonist slowly walked toward the" placeholder="前ページで途切れた文を入力">
+
+            <button class="t2-translate-btn">翻訳を実行</button>
+          </div>
+
+          <div class="t2-result-card">
+            <div class="t2-result-header">
+              <div class="t2-result-title">翻訳結果</div>
+              <div class="t2-page-num">142ページ</div>
+            </div>
+
+            <div class="t2-result-content">
+              <p>主人公はゆっくりと古い洋館へと歩を進めた。玄関のドアは風雨にさらされ、かつての輝きを失っていたが、その佇まいには依然として威厳が感じられた。</p>
+
+              <div class="t2-image-marker">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                イラスト挿入位置
+              </div>
+
+              <p>彼女は深呼吸をして、意を決したように扉に手をかけた。重厚な音とともに扉が開くと、埃の匂いが鼻を突いた。</p>
+            </div>
+
+            <div class="t2-footer-text">
+              <div class="t2-footer-label">原文末尾（次ページ用）</div>
+              <div class="t2-footer-value">Inside the mansion, she discovered a</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Theme 3: Neon Translator -->
+  <div id="theme3" class="theme-container">
+    <div class="theme-desc">
+      <h2>Neon Translator - ネオン翻訳機</h2>
+      <p>
+        サイバーパンク風の先進的なデザイン。シアンとマゼンタのネオンカラーが「最先端のAI技術」を視覚的に表現。
+        技術力をアピールしたい場合に最適。グロー効果とグラデーションが印象的で、
+        デモンストレーションで「すごい」と言わせるインパクトがあります。
+      </p>
+      <div class="theme-tags">
+        <span class="theme-tag">サイバーパンク</span>
+        <span class="theme-tag">先進的</span>
+        <span class="theme-tag">インパクト</span>
+        <span class="theme-tag">AI感</span>
+        <span class="theme-tag">テクノロジー</span>
+      </div>
+    </div>
+
+    <div class="theme3-preview">
+      <header class="t3-header">
+        <div class="t3-logo">
+          <div class="t3-logo-icon">
+            <svg class="icon" fill="none" stroke="#000" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          AI TRANSLATOR
+        </div>
+        <nav class="t3-nav">
+          <a href="#" class="t3-nav-item active">TRANSLATE</a>
+          <a href="#" class="t3-nav-item">WORKFLOW</a>
+        </nav>
+      </header>
+
+      <main class="t3-main">
+        <div class="t3-panel">
+          <div class="t3-panel-header">
+            <span class="t3-panel-dot cyan"></span>
+            <span class="t3-panel-dot pink"></span>
+            <span class="t3-panel-title">INPUT MODULE</span>
+          </div>
+          <div class="t3-panel-body">
+            <div class="t3-upload-area">
+              <div class="t3-upload-icon">
+                <svg class="icon-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+              </div>
+              <div class="t3-upload-title">スクリーンショットをドロップ</div>
+              <div class="t3-upload-desc">JPG / PNG - MAX 10MB</div>
+            </div>
+
+            <div class="t3-input-group">
+              <label class="t3-input-label">Previous Page Text</label>
+              <textarea class="t3-textarea">The protagonist slowly walked toward the</textarea>
+            </div>
+
+            <button class="t3-translate-btn">EXECUTE TRANSLATION</button>
+          </div>
+        </div>
+
+        <div class="t3-panel">
+          <div class="t3-panel-header">
+            <span class="t3-panel-dot green"></span>
+            <span class="t3-panel-title">OUTPUT MODULE</span>
+          </div>
+          <div class="t3-panel-body">
+            <div class="t3-result-content">
+              <p>主人公はゆっくりと古い洋館へと歩を進めた。玄関のドアは風雨にさらされ、かつての輝きを失っていたが、その佇まいには依然として威厳が感じられた。</p>
+
+              <div class="t3-image-marker">
+                <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                [IMAGE_HERE]
+              </div>
+
+              <p>彼女は深呼吸をして、意を決したように扉に手をかけた。重厚な音とともに扉が開くと、埃の匂いが鼻を突いた。</p>
+            </div>
+
+            <div class="t3-footer-text">
+              <div class="t3-footer-label">Trailing Text</div>
+              <div class="t3-footer-value">Inside the mansion, she discovered a</div>
+            </div>
+          </div>
+          <div class="t3-status-bar">
+            <div class="t3-status-item">
+              <span class="t3-status-indicator"></span>
+              GPT-4o Vision Active
+            </div>
+            <div class="t3-status-item">Page 142</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Theme 4: Nordic Frost -->
+  <div id="theme4" class="theme-container">
+    <div class="theme-desc">
+      <h2>Nordic Frost - 北欧の霜</h2>
+      <p>
+        北欧デザインに着想を得た、クリーンでミニマルなスタイル。余白を活かした洗練されたレイアウトで、
+        プロフェッショナルな印象を与えます。ブルーを基調とした配色は信頼感と知性を表現。
+        ビジネスシーンでの提案に最適で、どんなクライアントにも好印象。
+      </p>
+      <div class="theme-tags">
+        <span class="theme-tag">ミニマル</span>
+        <span class="theme-tag">クリーン</span>
+        <span class="theme-tag">プロフェッショナル</span>
+        <span class="theme-tag">ビジネス向け</span>
+        <span class="theme-tag">万人受け</span>
+      </div>
+    </div>
+
+    <div class="theme4-preview">
+      <header class="t4-header">
+        <div class="t4-logo">
+          <div class="t4-logo-icon">
+            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+            </svg>
+          </div>
+          洋書翻訳システム
+        </div>
+        <nav class="t4-nav">
+          <a href="#" class="t4-nav-item active">翻訳デモ</a>
+          <a href="#" class="t4-nav-item">ワークフロー</a>
+        </nav>
+      </header>
+
+      <main class="t4-main">
+        <div class="t4-hero">
+          <h1>洋書翻訳デモ</h1>
+          <p>Kindleスクリーンショットをアップロードして、AI翻訳の品質をお試しください</p>
+        </div>
+
+        <div class="t4-content-card">
+          <div class="t4-section-header">
+            <div class="t4-section-icon">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <div class="t4-section-title">画像アップロード</div>
+              <div class="t4-section-desc">翻訳したいページのスクリーンショットを選択</div>
+            </div>
+          </div>
+
+          <div class="t4-grid">
+            <div>
+              <div class="t4-upload-zone">
+                <div class="t4-upload-icon">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                </div>
+                <div class="t4-upload-title">ファイルを選択またはドロップ</div>
+                <div class="t4-upload-desc">JPG, PNG (最大10MB)</div>
+              </div>
+
+              <div class="t4-input-wrapper">
+                <label class="t4-label">前ページ末尾（オプション）</label>
+                <textarea class="t4-textarea" placeholder="前ページで途切れた英文を入力...">The protagonist slowly walked toward the</textarea>
+              </div>
+
+              <button class="t4-translate-btn">翻訳を実行</button>
+            </div>
+
+            <div class="t4-result-box">
+              <div class="t4-result-header">
+                <div class="t4-result-title">翻訳結果</div>
+                <div class="t4-result-page">Page 142</div>
+              </div>
+
+              <div class="t4-result-content">
+                <p>主人公はゆっくりと古い洋館へと歩を進めた。玄関のドアは風雨にさらされ、かつての輝きを失っていたが、その佇まいには依然として威厳が感じられた。</p>
+
+                <div class="t4-image-marker">
+                  <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  イラスト挿入位置
+                </div>
+
+                <p>彼女は深呼吸をして、意を決したように扉に手をかけた。</p>
+              </div>
+
+              <div class="t4-footer-card">
+                <div class="t4-footer-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="t4-footer-text">
+                  <div class="t4-footer-label">原文末尾（次ページ用）</div>
+                  <div class="t4-footer-value">Inside the mansion, she discovered a</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <footer class="selection-footer">
+    <div class="selection-info">
+      現在選択中: <strong id="current-theme">Midnight Scholar</strong>
+    </div>
+    <button class="select-btn" onclick="selectTheme()">このテーマを選択</button>
+  </footer>
+
+  <script>
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const themeContainers = document.querySelectorAll('.theme-container');
+    const currentThemeEl = document.getElementById('current-theme');
+
+    const themeNames = {
+      theme1: 'Midnight Scholar',
+      theme2: 'Paper & Ink',
+      theme3: 'Neon Translator',
+      theme4: 'Nordic Frost'
+    };
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.dataset.tab;
+
+        // Update active tab
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Show corresponding theme
+        themeContainers.forEach(container => {
+          container.classList.remove('active');
+          if (container.id === tabId) {
+            container.classList.add('active');
+          }
+        });
+
+        // Update footer
+        currentThemeEl.textContent = themeNames[tabId];
+      });
+    });
+
+    // Theme selection
+    function selectTheme() {
+      const selectedTheme = currentThemeEl.textContent;
+      alert(`「${selectedTheme}」テーマが選択されました。\n\n実際のプロジェクトでは、このテーマに基づいてフロントエンド開発を進めます。`);
+    }
+
+    // Add hover effects to upload areas
+    document.querySelectorAll('[class*="upload-area"], [class*="upload-zone"]').forEach(area => {
+      area.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        area.style.borderColor = 'currentColor';
+      });
+      area.addEventListener('dragleave', () => {
+        area.style.borderColor = '';
+      });
+    });
+  </script>
+</body>
+</html>
